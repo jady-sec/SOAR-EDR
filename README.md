@@ -51,8 +51,8 @@ The workflow:
 
 ## Setup Guide
 
-### LimaCharlie Configuration
-1. Log into app.limacharlie.io > Detection & Response > Rules > Create Rule.
+### Windows System Configuration
+1. Create a Windows VM to act as the victim system using the official Microsoft Downloads page [Visit the official Microsoft website](https://www.microsoft.com/en-ca/software-download/windows11).
 2. Use this YAML for detection (matches file path, command line, or hash; Windows only):
    ```yaml
    detect:
