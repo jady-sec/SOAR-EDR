@@ -51,8 +51,30 @@ The workflow:
 
 ## Setup Guide
 
+## Test Environment Setup (VM Installation)
+To safely test the workflow, set up a virtual machine (VM) as your test endpoint. This isolates LaZagne executions and prevents risks to real systems. We recommend using VirtualBox (free) for Windows guests.
+
+Download and Install VirtualBox:
+Go to virtualbox.org and download the latest version for your host OS.
+Install it (follow the wizard; enable Extension Pack for better USB/network support).
+Download Windows ISO:
+Get a Windows 10/11 ISO from Microsoft's site (use a free trial or your license).
+Create the VM:
+Open VirtualBox > Click "New".
+Name: "Test-Windows-Endpoint".
+Type: Microsoft Windows, Version: Windows 10/11 (64-bit).
+Allocate RAM: 4GB+, CPU: 2+, Storage: 50GB+ dynamic VDI.
+Attach the ISO: Settings > Storage > Add optical drive > Select ISO.
+Install Windows:
+Start the VM > Follow Windows setup (create user, skip product key for test).
+Install LimaCharlie sensor: Download from dashboard > Run installer on VM.
+Test Setup:
+Download LaZagne.exe to the VM (from GitHub repo—use safely!).
+Run it (e.g., LaZagne.exe all) to trigger detection.
+[Screenshot Suggestion: VirtualBox main window with VM created; Windows installation screen; LimaCharlie sensor install prompt on VM.]
+
 ### Windows System Configuration
-1. Create a Windows VM to act as the victim system using the official Microsoft Downloads page [Visit the official Microsoft website](https://www.microsoft.com/en-ca/software-download/windows11).
+1. Create a Windows VM to act as the victim system using the official Microsoft Downloads page [official Microsoft website](https://www.microsoft.com/en-ca/software-download/windows11).
 2. Use this YAML for detection (matches file path, command line, or hash; Windows only):
    ```yaml
    detect:
