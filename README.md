@@ -27,7 +27,7 @@ The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for 
 
 **Why this project?** It demonstrates EDR-SOAR integration for faster incident response, reducing manual work.
 
-![Tines Storyboard Overview](images/SOAR-WORKFLOW.drawio.png)
+![Workflow Overview](images/SOAR-WORKFLOW.drawio.png)
 
 ## Architecture
 The workflow:
@@ -40,7 +40,7 @@ The workflow:
    - Ignore: Deletes alert, sends "Marked as false positive" message.
 6. Suppress duplicates in LimaCharlie rule.
 
-[Screenshot Suggestion: Include a screenshot of the full Tines storyboard canvas showing agents connected (webhook, parse, branch/Trigger, extraction, isolation, delete, confirmation). Blur sensitive parts like keys.]
+![Tines storyboard Overview](images/tines-storyboard.png)
 
 ## Prerequisites
 - **LimaCharlie Account**: With API key (user-scoped with "sensor:isolate" permission) and UID/OID.
