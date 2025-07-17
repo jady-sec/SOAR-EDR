@@ -27,7 +27,7 @@ The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for 
 
 **Why this project?** It demonstrates EDR-SOAR integration for faster incident response, reducing manual work.
 
-[Screenshot Suggestion: Insert a high-level flow diagram here (use tools like Draw.io or Lucidchart to create one showing LimaCharlie → Webhook → Tines → VirusTotal → Slack → Back to Tines/LimaCharlie). Label components and arrows with steps.]
+![Tines Storyboard Overview](images/SOAR-WORKFLOW.drawio.png)
 
 ## Architecture
 The workflow:
