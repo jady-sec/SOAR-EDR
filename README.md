@@ -9,14 +9,39 @@ The workflow ensures only one detection per execution (via suppression), handles
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
 - [Test Environment Setup (VM Installation)](#test-environment-setup-vm-installation)
-- [Setup Guide](#setup-guide)
-  - [LimaCharlie Configuration](#limacharlie-configuration)
-  - [Tines Workflow](#tines-workflow)
-  - [Slack App Integration](#slack-app-integration)
-  - [VirusTotal Integration](#virustotal-integration)
+  - [Download and Install VirtualBox](#download-and-install-virtualbox)
+  - [Download Windows ISO](#download-windows-iso)
+  - [Create the VM](#create-the-vm)
+  - [Install Windows](#install-windows)
+  - [Install Sysmon (For Enhanced Logging)](#install-sysmon-for-enhanced-logging)
+  - [LimaCharlie Account Creation and Installation Key](#limacharlie-account-creation-and-installation-key)
+    - [Step 1: Create a LimaCharlie Account](#step-1-create-a-limacharlie-account)
+    - [Step 2: Generate an Installation Key](#step-2-generate-an-installation-key)
+  - [Install LimaCharlie Sensor](#install-limacharlie-sensor)
+  - [Test Setup](#test-setup)
+- [LimaCharlie Configuration](#limacharlie-configuration)
+- [Tines Workflow](#tines-workflow)
+  - [Detections Retrieval Webhook (from LimaCharlie)](#detections-retrieval-webhook-from-limacharlie)
+  - [HTTP Request (VirusTotal Enrichment)](#http-request-virustotal-enrichment)
+  - [Result](#result)
+  - [Slack App Integration (Custom Tines Bot Creation)](#slack-app-integration-custom-tines-bot-creation)
+  - [Send Message to Slack Template (Interactive Alert to Analyst)](#send-message-to-slack-template-interactive-alert-to-analyst)
+  - [Webhook Trigger (for Slack User Responses)](#webhook-trigger-for-slack-user-responses)
+  - [Event Transformation (JSON Parse of Payload)](#event-transformation-json-parse-of-payload)
+  - [Trigger (Branching on Button Click)](#trigger-branching-on-button-click)
+  - [Event Transformation (Get Sensor ID) - If User Clicks Quarantine](#event-transformation-get-sensor-id---if-user-clicks-quarantine)
+  - [Isolate Sensor (via Default LimaCharlie Template) - Quarantine Path](#isolate-sensor-via-default-limacharlie-template---quarantine-path)
+  - [HTTP Request (Delete Original Message) - After Quarantine](#http-request-delete-original-message---after-quarantine)
+  - [Send Email to Analyst (Quarantine Confirmation)](#send-email-to-analyst-quarantine-confirmation)
+  - [HTTP Request (Delete Message) - Ignore Path (quarantine_no)](#http-request-delete-message---ignore-path-quarantine_no)
+  - [Send Message to Slack Template (False Positive Message) - Ignore Path](#send-message-to-slack-template-false-positive-message---ignore-path)
+- [Credentials Configuration](#credentials-configuration)
+  - [Slack Credentials](#slack-credentials)
+  - [VirusTotal Credentials](#virustotal-credentials)
+  - [LimaCharlie Credentials](#limacharlie-credentials)
 - [Testing and Troubleshooting](#testing-and-troubleshooting)
 - [Extensions and Improvements](#extensions-and-improvements)
-- [License](#license)
+- [Conclusion](#conclusion)
 
 ## Overview
 The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for analyst review, and automates quarantine (network isolation) or ignore actions. Key features:
@@ -423,33 +448,26 @@ To securely store API keys and tokens in Tines, create credential resources. The
 5. Save. Reference as `{{ .limacharlie_api.uid }}` and `{{ .limacharlie_api.secret }}` in LimaCharlie-related agents (e.g., Isolate Sensor template).
 
 ![Limacharlie-api-success](images/limacharlie-api-credentials.png)
+
 *Screenshot of the Limacharlie api key page.*
 
 ## Testing and Troubleshooting
-1. Run LaZagne on test endpoint—expect one detection.
-2. Check Slack for alert, click buttons, verify quarantine in LimaCharlie, confirmations.
+1. Run LaZagne on test endpoint but be aware of the alert suppresion (1 detection per 1 minute).
+2. Use custom built tines app as the default one in slack doesnt register user interactions.
 3. Common issues:
-   - Duplicates: Verify suppression keys/period.
-   - API errors: Check logs for 401 (bad creds), 403 (permissions).
-   - Tines fails: Replay events, inspect agent outputs.
-
-![Slack Alert Before Action](images/slack-alert-before.png)
-*Screenshot of Slack alert message before action.*
-
-![Slack After Quarantine](images/slack-after-quarantine.png)
-*Screenshot of Slack confirmation after quarantine.*
-
-![LimaCharlie Detection Timeline](images/limacharlie-timeline.png)
-*Screenshot of detection in LimaCharlie timeline.*
-
-![Tines Run Logs](images/tines-run-logs.png)
-*Screenshot of Tines run logs showing successful flow.*
+   - Duplicates: Verify duplicate messages in slack.
+   - API errors: Check logs for 401 (bad creds) happens in limacharlie, 403 (permissions) happens in slack. Just refresh the page or copy and paste the credentials once again.
+   - Tines fails: Sometimes tines workflow might get timed out leading in error. Re-emit the event from the webhook and look for results
 
 ## Extensions and Improvements
-- Add unisolate button/flow.
-- Integrate email notifications via Tines template.
-- Monitor with Tines dashboards.
-- Scale: Add more rules for other tools.
+- Add unisolate button/flow which is useful when the API call to limacharlie fails
+- Connect different stories for multi staged incident playbooks.
+- Add a logging system that will handle analyst interactions
+- Scale: Add more detection rules for various other common attack paths.
 
-## License
-MIT License. See LICENSE file.
+## Conclusion
+
+This LaZagne detection and response workflow showcases a robust, automated approach to handling credential-dumping threats using tools like LimaCharlie, Tines, Slack, and VirusTotal. By automating detection, enrichment, notification, and response, it minimizes response time and reduces manual effort for security analysts. In case of an unexpected compromise on weekends or on off days this project provides the immediate isolation of the affected device without much effort. This prevents lateral movements in networks. The project is fully testable in a VM environment and scalable for production use.
+
+Feel free to fork this repo, contribute improvements, or adapt it for other threats. If you have questions or issues, open an issue on GitHub. Thanks for exploring—stay secure!
+
