@@ -98,7 +98,7 @@ To get started with LimaCharlie, you'll need to create a free account and genera
 - Click "Create"—copy the key (long string like "install-key-abc123...").
 - Use this key to install the sensor on your VM (run the installer command with the key).
 
-![Limacharlie installation keys](images/Limacharlie_installation_keys_screen.png)
+![Limacharlie installation keys](images/Limacharlie installation keys screen.png)
 
 This sets up your EDR backend—proceed to sensor installation on the VM.
 
