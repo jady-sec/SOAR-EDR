@@ -196,6 +196,32 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
 ![VirusTotal Enrichment Results](images/Virustotal-enrichment-results.png)
 *Screenshot of the event generated from the virustotal node.*
 
+### Slack App Integration (Custom Tines Bot Creation)
+To integrate Slack with Tines, create a custom Slack app with a bot user. This enables posting messages, handling interactive buttons, and deleting alerts. Follow these steps to set it up.
+
+1. **Create the Slack App**:
+   - Go to [api.slack.com/apps](https://api.slack.com/apps) and click "Create New App".
+   - Choose "From scratch", enter an app name (e.g., "Tines Alert Bot"), and select your workspace.
+   - Click "Create App".
+
+2. **Add Bot Features and Permissions**:
+   - In the app dashboard, go to "OAuth & Permissions" (left menu).
+   - Under "Scopes" > "Bot Token Scopes", add:
+     - `chat:write` (for posting/updating messages).
+     - `chat:delete` (for deleting alerts).
+     - `im:write` or `channels:manage` if needed for channels.
+     - `incoming-webhook` (for notifications).
+   - Scroll up to "OAuth Tokens for Your Workspace" > Click "Install to Workspace" > Authorize the app.
+   - Copy the "Bot User OAuth Token" (starts with "xoxb-")—this is your bot token.
+
+3. **Add the Bot to Channels**:
+   - In your Slack workspace, invite the bot to channels like "#alerts" (/invite @botname).
+
+This bot handles alerts, buttons, and actions securely.
+
+![Slack Bot Permissions](images/tines-bot-perms.png)
+*Screenshot of OAuth & Permissions page with bot scopes added.*
+
 #### Send Message to Slack Template (Interactive Alert to Analyst)
 - Add the Send Message to Slack template connected from VirusTotal Enrichment.
 - This sends the enriched detection (LimaCharlie details + VirusTotal intel like malicious flags, reputation, report link) to the analyst in Slack as an interactive message with Quarantine/Ignore buttons.
@@ -251,9 +277,17 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
   ```
 - This creates the alert with enrichment and buttons (sid passed in value for handling).
 
-![Send Message to Slack Template Configuration](images/send-message-slack-config.png)
-*Screenshot of the Send Message to Slack template configuration in Tines.*
-   - **Send Message to Slack Template**: Posts interactive alert with buttons (include sid in value as JSON).
+![Message in Slack](images/Message-on-slack.png)
+*Screenshot of the alert in slack.*
+
+#### Webhook Trigger (for Slack User Responses)
+- Add a second Webhook Trigger agent (separate from the LimaCharlie one) to receive button clicks from Slack's interactivity.
+- Configure: Generate the webhook URL in Tines and set it as the "Request URL" in your Slack app's interactivity settings (api.slack.com/apps > Your App > Interactivity & Shortcuts).
+- This captures the payload from Quarantine/Ignore buttons, including action_id, value (with sid), channel, and message_ts for branching and responses.
+
+![Webhook for Slack Responses Configuration](images/webhook-slack-responses-config.png)
+*Screenshot of the Webhook Trigger configuration for Slack responses in Tines.*
+
    - **Trigger (Branching)**: Rules for "quarantine_yes" and "quarantine_no" based on action_id/value.
    - On "yes":
      - Event Transformation (Regex Extract sid).
