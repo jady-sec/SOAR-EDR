@@ -30,7 +30,8 @@ The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for 
 **Why this project?** It demonstrates EDR-SOAR integration for faster incident response, reducing manual work.
 
 ![High-Level Flow Diagram](images/soar-workflow-final.png)
-*High-level workflow diagram showing components and steps.*
+
+*High-level workflow diagram.*
 
 ## Architecture
 The workflow:
@@ -39,7 +40,7 @@ The workflow:
 3. Tines enriches with VirusTotal API.
 4. Tines posts interactive Slack message with details and buttons (Quarantine/Ignore).
 5. On button click:
-   - Quarantine: Extracts sid, fetches JWT, isolates via LimaCharlie API, deletes alert, sends confirmation.
+   - Quarantine: Extracts sid, isolates via LimaCharlie API, deletes alert, sends confirmation.
    - Ignore: Deletes alert, sends "Marked as false positive" message.
 6. Suppress duplicates in LimaCharlie rule.
 
