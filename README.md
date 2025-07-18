@@ -171,7 +171,10 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
          max_count: 1
          period: 1m
    ```
-   
+4. This will detect new process creation of Lazagne.exe
+
+![Lazagne successful detection](images/Lazagne-process-creation-confirmation.png)
+ 
 ### Tines Workflow
 1. Create a new story in Tines.
 2. Add agents as follows (connect with arrows):
