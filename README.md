@@ -231,7 +231,7 @@ This bot handles alerts, buttons, and actions securely.
 #### Send Message to Slack Template (Interactive Alert to Analyst)
 - Add the Send Message to Slack template connected from VirusTotal Enrichment.
 - This sends the enriched detection (LimaCharlie details + VirusTotal intel like malicious flags, reputation, report link) to the analyst in Slack as an interactive message with Quarantine/Ignore buttons.
-- Credential: Your Slack bot token (See [Slack App Integration](#slack-app-integration)).
+- Credential: Your Slack bot token (See [Slack App Integration](#slack-integration)).
 - Channel: Channel ID of the channel you want the alert to be sent.
 - Message Text: Fallback plain text with key details (e.g., "Detection Alert: LaZagne on [hostname]. VT: [malicious count]/total engines.").
 - Blocks: Use JSON for formatted message:
@@ -396,10 +396,10 @@ This bot handles alerts, buttons, and actions securely.
 ![False Positive Message Confirmation](images/send-message-ignore.png)
 *Screenshot of the False Positive Message.*
 
-### Credentials Configuration
+## Integrations
 To securely store API keys and tokens in Tines, create credential resources. These are referenced in agents (e.g., `{{ .slack_bot_token }}`) to avoid hardcoding secrets. Follow these steps for each service.
 
-#### Slack Credentials
+### Slack Integration
 1. In Tines, go to Resources > Credentials > Click "Create Credential".
 2. Name: "slack_bot_token".
 3. Type: "Text".
@@ -409,7 +409,7 @@ To securely store API keys and tokens in Tines, create credential resources. The
 ![slack-api-success](images/slack-api-credential.png)
 *Screenshot of the slack api key page.*
 
-#### VirusTotal Credentials
+### VirusTotal Integration
 1. In Tines, go to Resources > Credentials > Click "Create Credential".
 2. Name: "virustotal_api".
 3. Type: "Text".
@@ -419,7 +419,7 @@ To securely store API keys and tokens in Tines, create credential resources. The
 ![virustotal-api-success](images/virustotal-api-credentials.png)
 *Screenshot of the virustotal api key page.*
 
-#### LimaCharlie Credentials
+### LimaCharlie Integration
 1. In Tines, go to Resources > Credentials > Click "Create Credential".
 2. Name: "limacharlie_api".
 3. Type: "Text".
