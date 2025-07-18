@@ -429,6 +429,10 @@ To securely store API keys and tokens in Tines, create credential resources. The
 
 *Screenshot of the Limacharlie api key page.*
 
+###[Link-to-tines-workbook](soar-edr.json)
+
+###[Link-to-demo-video](soar-edr-demo.mp4)
+
 ## Testing and Troubleshooting
 1. Run LaZagne on test endpoint but be aware of the alert suppresion (1 detection per 1 minute).
 2. Use custom built tines app as the default one in slack doesnt register user interactions.
