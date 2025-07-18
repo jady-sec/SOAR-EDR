@@ -5,6 +5,7 @@ This project implements an automated Security Orchestration, Automation, and Res
 The workflow ensures only one detection per execution (via suppression), handles duplicates, quarantines machines on approval, deletes alerts on ignore, and sends confirmations.
 
 ## Table of Contents
+- [Inspirations and Acknowledgements](#inspirations-and-acknowledgements)
 - [Overview](#overview)
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
@@ -16,9 +17,7 @@ The workflow ensures only one detection per execution (via suppression), handles
 
 ## Inspirations and Acknowledgments
 
-This project was inspired by the [MYDFIR SOAR project](https://youtu.be/Gs1pYJfWv7k?si=HPL_kqe5mb8GUF_P) , which provided a foundational idea for integrating EDR with SOAR tools. While we drew inspiration from its structure, we took different paths, including custom deduplication in LimaCharlie, interactive Slack buttons with button value encoding for sid, VirusTotal enrichment, and Tines-specific templates for isolation and messaging. Significant developments were made to handle duplicates, add confirmations/deletes, and ensure end-to-end automation.
-
-Thanks to the MYDFIR team for the initial spark! If you're interested in similar workflows, check out their repo.
+This project was inspired by the [MYDFIR SOAR project](https://youtu.be/Gs1pYJfWv7k?si=HPL_kqe5mb8GUF_P) , which provided a foundational idea for integrating EDR with SOAR tools. While I drew inspiration from its structure, we took different paths, including custom deduplication in LimaCharlie, interactive Slack buttons with button value encoding for sid, and VirusTotal enrichment. 
 
 ## Overview
 The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for analyst review, and automates quarantine (network isolation) or ignore actions. Key features:
