@@ -191,12 +191,68 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
 
 ![VirusTotal Enrichment Configuration](images/virustotal-enrichment-configuration.png)
 
-####Result
+#### Result
 
 ![VirusTotal Enrichment Results](images/Virustotal-enrichment-results.png)
 *Screenshot of the event generated from the virustotal node.*
-  
-   - **HTTP Request (VirusTotal Enrichment)**: API call with file hash from detection.
+
+#### Send Message to Slack Template (Interactive Alert to Analyst)
+- Add the Send Message to Slack template connected from VirusTotal Enrichment.
+- This sends the enriched detection (LimaCharlie details + VirusTotal intel like malicious flags, reputation, report link) to the analyst in Slack as an interactive message with Quarantine/Ignore buttons.
+- Credential: Your Slack bot token (See [Slack App Integration](#slack-app-integration)).
+- Channel: Channel ID of the channel you want the alert to be sent.
+- Message Text: Fallback plain text with key details (e.g., "Detection Alert: LaZagne on [hostname]. VT: [malicious count]/total engines.").
+- Blocks: Use JSON for formatted message:
+  ```
+  {
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Detection Alert: LaZagne Detected*\n*Sensor ID:* <<detections_retrieval.body.routing.sid>>\n*Computer Name:* <<detections_retrieval.body.detect.routing.hostname>> \n*Type:* <<detections_retrieval.body.routing.event_type>>\n*File path:* <<detections_retrieval.body.detect.event.FILE_PATH>>"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Virus Total Enrichment:*\n*Times Submitted:* <<virus_total_enrichment.body.data.attributes.times_submitted>>\n*Number of Malicious Flags:* <<virus_total_enrichment.body.data.attributes.last_analysis_stats.malicious>>\n*Threat Label:* <<virus_total_enrichment.body.data.attributes.popular_threat_classification.suggested_threat_label>>\n*Link to Virus total Report:* \"https://www.virustotal.com/gui/file/<<virus_total_enrichment.body.data.id>>\"\n"
+      }
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Quarantine?"
+          },
+          "style": "danger",
+          "value": "{ 'action': 'quarantine', 'sid': <<detections_retrieval.body.routing.sid>> }",
+          "action_id": "quarantine_yes"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "🚫 Ignore"
+          },
+          "style": "primary",
+          "value": "false_positive",
+          "action_id": "quarantine_no"
+        }
+      ]
+    }
+  ]
+
+  }
+  ```
+- This creates the alert with enrichment and buttons (sid passed in value for handling).
+
+![Send Message to Slack Template Configuration](images/send-message-slack-config.png)
+*Screenshot of the Send Message to Slack template configuration in Tines.*
    - **Send Message to Slack Template**: Posts interactive alert with buttons (include sid in value as JSON).
    - **Trigger (Branching)**: Rules for "quarantine_yes" and "quarantine_no" based on action_id/value.
    - On "yes":
