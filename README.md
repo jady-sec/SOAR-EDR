@@ -344,7 +344,30 @@ This bot handles alerts, buttons, and actions securely.
 ![Isolate Sensor success proof](images/isolate-success-edr.png)
 *Screenshot of Isolated Sensor event in Limacharlie.*
 
+#### HTTP Request (Delete Original Message) - After Quarantine
+- On the "quarantine_yes" path, add an HTTP Request agent connected from the Isolate Sensor template (after successful isolation).
+- This deletes the original Slack alert message to clean up the channel.
+- Method: POST.
+- URL: `https://slack.com/api/chat.delete`.
+- Headers: "Authorization" = `Bearer {{ .slack_bot_token }}`.
+- Body (JSON): `{ "channel": "{{ .json_parse_payload.output.channel.id }}", "ts": "{{ .json_parse_payload.output.message.ts }}" }`.
+- This removes the interactive alert post-quarantine.
 
+![Delete Original Message event](images/delete-quarantine-event.png)
+*Screenshot of the event after (Delete Original Message) is executed.*
+
+#### Send Email to Analyst (Quarantine Confirmation)
+- On the "quarantine_yes" path, add the Send Email template (or HTTP Request for SMTP) connected from the delete message agent.
+- This emails the analyst with details: the user who approved quarantine, sensor ID, and success status.
+- Configure:
+  - To: Analyst email (hardcode or dynamic, e.g., `{{ .json_parse_payload.output.user.email }}` if available).
+  - Subject: "Sensor with Sensor ID<<get_sensor_id.output>> has been isolated from the network.".
+  - Body: HTML or plain text like "<<json_parse_payload.output.user.username>> isolated <<get_sensor_id.output>> via Slack."
+  - Credential: Use default gmail.
+- This notifies via email in addition to Slack.
+
+![Email to Analyst Configuration](images/email-confirmation.png)
+*Screenshot of the Email sent to the analyst.*
 4. Credentials: Create for LimaCharlie (uid/secret), Slack (bot token), VirusTotal (key).
 
 Export your Tines story as JSON and include it in this repo for replication.
