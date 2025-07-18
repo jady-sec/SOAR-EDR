@@ -231,7 +231,7 @@ This bot handles alerts, buttons, and actions securely.
 #### Send Message to Slack Template (Interactive Alert to Analyst)
 - Add the Send Message to Slack template connected from VirusTotal Enrichment.
 - This sends the enriched detection (LimaCharlie details + VirusTotal intel like malicious flags, reputation, report link) to the analyst in Slack as an interactive message with Quarantine/Ignore buttons.
-- Credential: Your Slack bot token (See [Slack App Integration](#slack-integration)).
+- Credential: Your Slack bot token (See [Slack Integration](#slack-integration)).
 - Channel: Channel ID of the channel you want the alert to be sent.
 - Message Text: Fallback plain text with key details (e.g., "Detection Alert: LaZagne on [hostname]. VT: [malicious count]/total engines.").
 - Blocks: Use JSON for formatted message:
