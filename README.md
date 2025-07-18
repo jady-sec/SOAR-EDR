@@ -8,6 +8,7 @@ The workflow ensures only one detection per execution (via suppression), handles
 - [Overview](#overview)
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
+- [Test Environment Setup (VM Installation)](#test-environment-setup-vm-installation)
 - [Setup Guide](#setup-guide)
   - [LimaCharlie Configuration](#limacharlie-configuration)
   - [Tines Workflow](#tines-workflow)
@@ -27,7 +28,8 @@ The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for 
 
 **Why this project?** It demonstrates EDR-SOAR integration for faster incident response, reducing manual work.
 
-![Workflow Overview](images/SOAR-WORKFLOW.drawio.png)
+![High-Level Flow Diagram](images/flow-diagram.png)
+*High-level workflow diagram showing components and steps.*
 
 ## Architecture
 The workflow:
@@ -40,7 +42,8 @@ The workflow:
    - Ignore: Deletes alert, sends "Marked as false positive" message.
 6. Suppress duplicates in LimaCharlie rule.
 
-![Tines storyboard Overview](images/tines-storyboard.png)
+![Tines Storyboard Overview](images/tines-storyboard.png)
+*Screenshot of the full Tines storyboard canvas with agents connected.*
 
 ## Prerequisites
 - **LimaCharlie Account**: With API key (user-scoped with "sensor:isolate" permission) and UID/OID.
@@ -49,32 +52,79 @@ The workflow:
 - **VirusTotal API Key**: Free account for enrichment.
 - Test endpoint (Windows VM) with LaZagne.exe for testing.
 
+## Test Environment Setup (VM Installation)
+To safely test the workflow, set up a virtual machine (VM) as your test endpoint. This isolates LaZagne executions and prevents risks to real systems. We recommend using [VirtualBox](https://www.virtualbox.org/) (free) for Windows guests.
+
+### Download and Install VirtualBox
+- Go to [virtualbox.org](https://www.virtualbox.org/) and download the latest version for your host OS.
+- Install it (follow the wizard; enable Extension Pack for better USB/network support).
+
+### Download Windows ISO
+- Get a Windows 10/11 ISO from [Microsoft's site](https://www.microsoft.com/en-us/software-download/windows10) (use a free trial or your license).
+
+### Create the VM
+- Open VirtualBox > Click "New".
+- Name: "Test-Windows-Endpoint".
+- Type: Microsoft Windows, Version: Windows 10/11 (64-bit).
+- Allocate RAM: 4GB+, CPU: 2+, Storage: 50GB+ dynamic VDI.
+- Attach the ISO: Settings > Storage > Add optical drive > Select ISO.
+
+### Install Windows
+- Start the VM > Follow Windows setup (create user, skip product key for test).
+
+### Install Sysmon (For Enhanced Logging)
+- Download Sysmon from [Microsoft Sysinternals](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon).
+- Extract the ZIP on the VM.
+- Run in Command Prompt (as admin): `Sysmon64.exe -accepteula -i sysmonconfig.xml` (use a config file like from SwiftOnSecurity's GitHub for good defaults: Download [sysmonconfig.xml](https://github.com/SwiftOnSecurity/sysmon-config) and place it in the same folder).
+- Verify: Open Event Viewer > Applications and Services Logs > Microsoft > Windows > Sysmon > Operational—look for sysmon with event_id 1.
+
+### LimaCharlie Account Creation and Installation Key
+
+To get started with LimaCharlie, you'll need to create a free account and generate an installation key for deploying the sensor on your test endpoint. This key is used to enroll devices (like your VM) into your organization for monitoring.
+
+#### Step 1: Create a LimaCharlie Account
+- Visit the [LimaCharlie signup page](https://app.limacharlie.io/signup) or [limacharlie.io](https://limacharlie.io) and click "Sign Up" or "Try for Free".
+- Fill in your details: Email, password, and organization name (e.g., "TestOrg").
+- Verify your email (check inbox for confirmation link).
+- Log in at [app.limacharlie.io](https://app.limacharlie.io) with your credentials.
+- Note: Free tier includes basic features; upgrade for advanced if needed.
+
+#### Step 2: Generate an Installation Key
+- In the dashboard, go to the left menu > Sensors > Installation Keys (or search for "Installation Keys").
+- Click "Create New Key".
+- Name it: e.g., "TestVMKey".
+- Set permissions: Default is fine for testing (includes telemetry and response capabilities).
+- Expiration: Set to "Never" for persistent use, or a date for temporary.
+- Click "Create"—copy the key (long string like "install-key-abc123...").
+- Use this key to install the sensor on your VM (run the installer command with the key).
+
+[Screenshot Suggestion: LimaCharlie signup form; Dashboard view of Installation Keys page with new key created.]
+
+This sets up your EDR backend—proceed to sensor installation on the VM. If issues, check LimaCharlie docs or support.
+
+### Install LimaCharlie Sensor
+- Download from LimaCharlie dashboard > Run installer on VM.
+
+### Test Setup
+- Download LaZagne.exe to the VM (from [GitHub repo](https://github.com/AlessandroZ/LaZagne)—use safely!).
+- Run it (e.g., `LaZagne.exe all`) to trigger detection.
+
+![VirtualBox Main Window](images/virtualbox-main-window.png)
+*Screenshot of VirtualBox main window with VM created.*
+
+![Windows Installation Screen](images/windows-installation.png)
+*Screenshot of Windows installation screen.*
+
+![Sysmon Installation](images/sysmon-install.png)
+*Screenshot of Sysmon installation command prompt.*
+
+![LimaCharlie Sensor Install](images/limacharlie-sensor-install.png)
+*Screenshot of LimaCharlie sensor install prompt on VM.*
+
 ## Setup Guide
 
-## Test Environment Setup (VM Installation)
-To safely test the workflow, set up a virtual machine (VM) as your test endpoint. This isolates LaZagne executions and prevents risks to real systems. We recommend using VirtualBox (free) for Windows guests.
-
-Download and Install VirtualBox:
-Go to virtualbox.org and download the latest version for your host OS.
-Install it (follow the wizard; enable Extension Pack for better USB/network support).
-Download Windows ISO:
-Get a Windows 10/11 ISO from Microsoft's site (use a free trial or your license).
-Create the VM:
-Open VirtualBox > Click "New".
-Name: "Test-Windows-Endpoint".
-Type: Microsoft Windows, Version: Windows 10/11 (64-bit).
-Allocate RAM: 4GB+, CPU: 2+, Storage: 50GB+ dynamic VDI.
-Attach the ISO: Settings > Storage > Add optical drive > Select ISO.
-Install Windows:
-Start the VM > Follow Windows setup (create user, skip product key for test).
-Install LimaCharlie sensor: Download from dashboard > Run installer on VM.
-Test Setup:
-Download LaZagne.exe to the VM (from GitHub repo—use safely!).
-Run it (e.g., LaZagne.exe all) to trigger detection.
-[Screenshot Suggestion: VirtualBox main window with VM created; Windows installation screen; LimaCharlie sensor install prompt on VM.]
-
-### Windows System Configuration
-1. Create a Windows VM to act as the victim system using the official Microsoft Downloads page [official Microsoft website](https://www.microsoft.com/en-ca/software-download/windows11).
+### LimaCharlie Configuration
+1. Log into app.limacharlie.io > Detection & Response > Rules > Create Rule.
 2. Use this YAML for detection (matches file path, command line, or hash; Windows only):
    ```yaml
    detect:
@@ -98,7 +148,7 @@ Run it (e.g., LaZagne.exe all) to trigger detection.
              op: is
              path: event/HASH
              value: 64dd55e1c2373deed25c2776f553c632e58c45e56a0e4639dfd54ee97eab9c19
-   # LaZagne Detection and Response Workflow
+   ```
 3. Response (with suppression for dedup):
    ```yaml
    respond:
@@ -122,7 +172,8 @@ Run it (e.g., LaZagne.exe all) to trigger detection.
    ```
 4. Add webhook output: In response, add action to send to your Tines webhook URL.
 
-[Screenshot Suggestion: Show the D&R rule editor in LimaCharlie with the detect/response YAML highlighted.]
+![LimaCharlie D&R Rule Editor](images/limacharlie-rule-editor.png)
+*Screenshot of the D&R rule editor with detect and response YAML.*
 
 ### Tines Workflow
 1. Create a new story in Tines.
@@ -144,14 +195,22 @@ Run it (e.g., LaZagne.exe all) to trigger detection.
 
 Export your Tines story as JSON and include it in this repo for replication.
 
-[Screenshot Suggestion: Full Tines storyboard; close-ups of key agents like Trigger rules, extraction regex, and Slack template config.]
+![Tines Trigger Rules Close-Up](images/tines-trigger-rules.png)
+*Close-up screenshot of Trigger rules in Tines.*
+
+![Tines Extraction Regex](images/tines-extraction-regex.png)
+*Screenshot of the Event Transformation agent for sid extraction.*
 
 ### Slack App Integration
 1. Create app at api.slack.com/apps > Add features: Bot, permissions (chat:write, chat:delete).
 2. Install to workspace, get bot token.
 3. Add interactivity: Set Request URL to your Tines webhook for button clicks.
 
-[Screenshot Suggestion: Slack app permissions page and interactivity setup.]
+![Slack App Permissions](images/slack-permissions.png)
+*Screenshot of Slack app permissions page.*
+
+![Slack Interactivity Setup](images/slack-interactivity.png)
+*Screenshot of Slack interactivity setup with Tines webhook URL.*
 
 ### VirusTotal Integration
 1. Get free API key at virustotal.com.
@@ -166,7 +225,17 @@ Export your Tines story as JSON and include it in this repo for replication.
    - API errors: Check logs for 401 (bad creds), 403 (permissions).
    - Tines fails: Replay events, inspect agent outputs.
 
-[Screenshot Suggestion: Before/after Slack messages (alert, after quarantine/ignore); LimaCharlie detection timeline; Tines run logs.]
+![Slack Alert Before Action](images/slack-alert-before.png)
+*Screenshot of Slack alert message before action.*
+
+![Slack After Quarantine](images/slack-after-quarantine.png)
+*Screenshot of Slack confirmation after quarantine.*
+
+![LimaCharlie Detection Timeline](images/limacharlie-timeline.png)
+*Screenshot of detection in LimaCharlie timeline.*
+
+![Tines Run Logs](images/tines-run-logs.png)
+*Screenshot of Tines run logs showing successful flow.*
 
 ## Extensions and Improvements
 - Add unisolate button/flow.
