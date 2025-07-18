@@ -5,9 +5,24 @@ This project implements an automated Security Orchestration, Automation, and Res
 The workflow ensures only one detection per execution (via suppression), handles duplicates, quarantines machines on approval, deletes alerts on ignore, and sends confirmations.
 
 ## Table of Contents
+
+<details>
+<summary>Overview</summary>
 - [Overview](#overview)
+</details>
+
+<details>
+<summary>Architecture</summary>
 - [Architecture](#architecture)
+</details>
+
+<details>
+<summary>Prerequisites</summary>
 - [Prerequisites](#prerequisites)
+</details>
+
+<details>
+<summary>Test Environment Setup (VM Installation)</summary>
 - [Test Environment Setup (VM Installation)](#test-environment-setup-vm-installation)
   - [Download and Install VirtualBox](#download-and-install-virtualbox)
   - [Download Windows ISO](#download-windows-iso)
@@ -19,7 +34,15 @@ The workflow ensures only one detection per execution (via suppression), handles
     - [Step 2: Generate an Installation Key](#step-2-generate-an-installation-key)
   - [Install LimaCharlie Sensor](#install-limacharlie-sensor)
   - [Test Setup](#test-setup)
+</details>
+
+<details>
+<summary>LimaCharlie Configuration</summary>
 - [LimaCharlie Configuration](#limacharlie-configuration)
+</details>
+
+<details>
+<summary>Tines Workflow</summary>
 - [Tines Workflow](#tines-workflow)
   - [Detections Retrieval Webhook (from LimaCharlie)](#detections-retrieval-webhook-from-limacharlie)
   - [HTTP Request (VirusTotal Enrichment)](#http-request-virustotal-enrichment)
@@ -35,13 +58,35 @@ The workflow ensures only one detection per execution (via suppression), handles
   - [Send Email to Analyst (Quarantine Confirmation)](#send-email-to-analyst-quarantine-confirmation)
   - [HTTP Request (Delete Message) - Ignore Path (quarantine_no)](#http-request-delete-message---ignore-path-quarantine_no)
   - [Send Message to Slack Template (False Positive Message) - Ignore Path](#send-message-to-slack-template-false-positive-message---ignore-path)
+</details>
+
+<details>
+<summary>Credentials Configuration</summary>
 - [Credentials Configuration](#credentials-configuration)
   - [Slack Credentials](#slack-credentials)
   - [VirusTotal Credentials](#virustotal-credentials)
   - [LimaCharlie Credentials](#limacharlie-credentials)
+</details>
+
+<details>
+<summary>Testing and Troubleshooting</summary>
 - [Testing and Troubleshooting](#testing-and-troubleshooting)
+</details>
+
+<details>
+<summary>Extensions and Improvements</summary>
 - [Extensions and Improvements](#extensions-and-improvements)
+</details>
+
+<details>
+<summary>Conclusion</summary>
 - [Conclusion](#conclusion)
+</details>
+
+<details>
+<summary>License</summary>
+- [License](#license)
+</details>
 
 ## Overview
 The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for analyst review, and automates quarantine (network isolation) or ignore actions. Key features:
