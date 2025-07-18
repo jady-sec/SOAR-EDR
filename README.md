@@ -68,6 +68,7 @@ To safely test the workflow, set up a virtual machine (VM) as your test endpoint
 - Type: Microsoft Windows, Version: Windows 10/11 (64-bit).
 - Allocate RAM: 4GB+, CPU: 2+, Storage: 50GB+ dynamic VDI.
 - Attach the ISO: Settings > Storage > Add optical drive > Select ISO.
+
 ![VirtualBox Main Window](images/VM-front-page.png)
 *VirtualBox main window with VM created.*
 
@@ -79,6 +80,7 @@ To safely test the workflow, set up a virtual machine (VM) as your test endpoint
 - Extract the ZIP on the VM.
 - Run in Command Prompt (as admin): `Sysmon64.exe -accepteula -i sysmonconfig.xml` (use a config file like from SwiftOnSecurity's GitHub for good defaults: Download [sysmonconfig.xml](https://github.com/SwiftOnSecurity/sysmon-config) and place it in the same folder).
 - Verify: Open Event Viewer > Applications and Services Logs > Microsoft > Windows > Sysmon > Operational—look for sysmon with event_id 1.
+
 ![Sysmon event confirmation](images/Sysmon-event-creation-confirmation.png)
 *New processes are detected via Sysmon.*
 
@@ -116,10 +118,8 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
 - Download LaZagne.exe to the VM (from [GitHub repo](https://github.com/AlessandroZ/LaZagne)—use safely!).
 - Run it (e.g., `LaZagne.exe all`) to trigger detection.
 
-
-
-
-## Setup Guide
+![Lazagne running](images/Client-system-testing.png)
+*Lazagne is successfully running.*
 
 ### LimaCharlie Configuration
 1. Log into app.limacharlie.io > Detection & Response > Rules > Create Rule.
@@ -168,16 +168,34 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
          max_count: 1
          period: 1m
    ```
-4. Add webhook output: In response, add action to send to your Tines webhook URL.
-
-![LimaCharlie D&R Rule Editor](images/limacharlie-rule-editor.png)
-*Screenshot of the D&R rule editor with detect and response YAML.*
-
+   
 ### Tines Workflow
 1. Create a new story in Tines.
 2. Add agents as follows (connect with arrows):
-   - **Webhook Trigger**: Receives from LimaCharlie.
-   - **Event Transformation (JSON Parse)**: Parses payload.
+   
+#### Detections Retrieval Webhook (from LimaCharlie)
+- Add a Webhook Trigger agent as the entry point for detections from LimaCharlie.
+- Configure: Generate the webhook URL in Tines (copy it) and set it as the output in your LimaCharlie D&R rule's response.
+- This receives the raw detection payload when LaZagne is detected.
+
+![Detections Retrieval Output](images/limacharlie-ouput-page.png)
+*Output Configuration.*
+
+#### HTTP Request (VirusTotal Enrichment)
+- Add an HTTP Request agent connected from the JSON Parse agent.
+- This queries VirusTotal for threat intel on the detected file's hash (e.g., malicious flags, reputation).
+- Method: GET.
+- URL: `https://www.virustotal.com/api/v3/files/<<detections_retrieval.body.detect.event.HASH>>` (use the hash from the detection event).
+- Headers: Add "x-apikey" = `{{ .virustotal_api.key }}` (your VirusTotal credential) See [VirusTotal Integration](#virustotal-integration).
+- The response enriches the alert with details like detections count and link, passed to the Slack message.
+
+![VirusTotal Enrichment Configuration](images/virustotal-enrichment-configuration.png)
+
+####Result
+
+![VirusTotal Enrichment Results](images/Virustotal-enrichment-results.png)
+*Screenshot of the event generated from the virustotal node.*
+  
    - **HTTP Request (VirusTotal Enrichment)**: API call with file hash from detection.
    - **Send Message to Slack Template**: Posts interactive alert with buttons (include sid in value as JSON).
    - **Trigger (Branching)**: Rules for "quarantine_yes" and "quarantine_no" based on action_id/value.
@@ -189,7 +207,7 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
    - On "no":
      - HTTP Request (Delete message).
      - Send Message to Slack Template (false positive message).
-3. Credentials: Create for LimaCharlie (uid/secret), Slack (bot token), VirusTotal (key).
+4. Credentials: Create for LimaCharlie (uid/secret), Slack (bot token), VirusTotal (key).
 
 Export your Tines story as JSON and include it in this repo for replication.
 
