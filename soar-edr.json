@@ -1,0 +1,1123 @@
+{
+  "schema_version": 27,
+  "standard_lib_version": 83,
+  "action_runtime_version": 45,
+  "name": "SOAR-EDR",
+  "description": null,
+  "guid": "0ec6d123ff2fdce49119cff597c35bdc",
+  "slug": "soar_edr",
+  "agents": [
+    {
+      "type": "Agents::WebhookAgent",
+      "name": "Detections Retrieval",
+      "disabled": false,
+      "description": null,
+      "guid": "23e66481a8ce428c491d7451b0552372",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "path": "697f6e7859a97d9c08a86fc3e1d8d9c5",
+        "secret": "3a004f2d731d572fa5e0218766f29a61",
+        "verbs": "get,post"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Virus total enrichment",
+      "disabled": false,
+      "description": null,
+      "guid": "836570d6b60f5a52eba29e87a3edb819",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "url": "https://www.virustotal.com/api/v3/files/<<detections_retrieval.body.detect.event.HASH>>",
+        "content_type": "application_json",
+        "method": "get",
+        "payload": {
+          "key": "value",
+          "array_example": [
+            "foo",
+            "bar"
+          ],
+          "object_example": {
+            "key": "value"
+          }
+        },
+        "headers": {
+          "x-apikey": "46e1620a42da63c3a26999711ffd93d2f9efe394f6546b565d3f8d6e3dbb3072"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Sends Enriched info to analyst",
+      "disabled": false,
+      "description": "",
+      "guid": "cda19bff456211432d499f64153c4a35",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": "=LOCAL.final_payload",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        },
+        "local": {
+          "all_options": {
+            "channel": "<<INPUT.channel_user_id>>",
+            "blocks": "=DEFAULT(INPUT.message.blocks, INPUT.message)",
+            "icon_emoji": "<<INPUT.icon_emoji>>",
+            "icon_url": "<<INPUT.icon_url>>",
+            "link_names": "=INPUT.link_names",
+            "thread_ts": "\"<<INPUT.thread_timestamp>>\"",
+            "username": "<<INPUT.username>>",
+            "metadata": "=INPUT.metadata",
+            "mrkdwn": "=INPUT.markdown",
+            "reply_broadcast": "=INPUT.send_reply_to_channel",
+            "unfurl_links": "=INPUT.unfurl_links",
+            "unfurl_media": "=INPUT.unfurl_media",
+            "parse": "<<INPUT.parse>>"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_options,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "52e0649e3d147759de03210df9686e0b4a86587edd0fde896e11fae52acf1f7e",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::WebhookAgent",
+      "name": "User Response on Slack",
+      "disabled": false,
+      "description": null,
+      "guid": "6665494ab6cc850128732af881bb5d6c",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "path": "72f182c168ccf91af42f204a0e33ab0d",
+        "secret": "335f2a2f03de939970d213042c4f07fc",
+        "verbs": "get,post"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "JSON Parse Payload",
+      "disabled": false,
+      "description": null,
+      "guid": "6856d48cec4ecb5681f4c617741f81db",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "mode": "automatic",
+        "input": "=user_response_on_slack.body.payload",
+        "guidance": "JSON parse and return json object\n",
+        "language": "python",
+        "script": "import json\n\ndef main(input):\n    # If input is a string, parse it as JSON\n    if isinstance(input, str):\n        return json.loads(input)\n    \n    # If input is already a dictionary, return it directly\n    return input"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Trigger Action",
+      "disabled": false,
+      "description": null,
+      "guid": "273be982789eb4321fb0feb04ec7200d",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "rules": [
+          {
+            "type": "field==value",
+            "value": "quarantine_yes",
+            "path": "<<json_parse_payload.output.actions[0].action_id>>"
+          }
+        ]
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Delete a message",
+      "disabled": false,
+      "description": "Deletes a message from a channel or conversation.\n\nLink to documentation: https://api.slack.com/methods/chat.delete\n\nRequired scope: chat:write",
+      "guid": "9f3ba4f694cf0fdf443d834246dd3263",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "url": "https://slack.com/api/chat.delete",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": {
+          "channel": "<<INPUT.channel_id>>",
+          "ts": "\"<<INPUT.message_timestamp>>\""
+        },
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "0e1e8eb2b60e7ab8cdd1c7bd5cf1efa88ba547422b545f0fd87e4c2ab6b4b3d3",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Trigger Action",
+      "disabled": false,
+      "description": null,
+      "guid": "963fdcad11dd752229189571930e4074",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "rules": [
+          {
+            "type": "field==value",
+            "value": "quarantine_no",
+            "path": "<<json_parse_payload.output.actions[0].action_id>>"
+          }
+        ]
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Get Sensor ID",
+      "disabled": false,
+      "description": null,
+      "guid": "c73aa3fbf39b1acfa976dccd9ae33c52",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "mode": "automatic",
+        "input": "=json_parse_payload.output.actions[0].value",
+        "guidance": "'sid':\\s*([a-f0-9-]+)\nSearch for regex and return",
+        "language": "python",
+        "script": "import re\n\ndef main(input):\n    match = re.search(r'sid\\':\\s*([a-f0-9-]+)', str(input))\n    return match.group(1) if match else None"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Isolate Sensor",
+      "disabled": false,
+      "description": "Isolate Sensor",
+      "guid": "2a60e562c16219316c90fe9b0402198a",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "url": "https://api.limacharlie.io/v1/<<get_sensor_id.output>>/isolation",
+        "method": "post",
+        "content_type": "json",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.limacharlie_api>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "343f11e94542086533a79198625436245111a945f1c96b3670a1df93a3197101",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EmailAgent",
+      "name": "Send email to analyst",
+      "disabled": false,
+      "description": "Confirmation of isolation",
+      "guid": "a86e7c676d830390a7a755f00c80d886",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "recipients": "jady2373@gmail.com",
+        "reply_to": "jady2373@gmail.com",
+        "sender_name": "Tines",
+        "subject": "Sensor with Sensor ID<<get_sensor_id.output>> has been isolated from the network.",
+        "body": "<<json_parse_payload.output.user.username>> isolated <<get_sensor_id.output>> via Slack.",
+        "advanced_html": true
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Delete a message",
+      "disabled": false,
+      "description": "Deletes a message from a channel or conversation.\n\nLink to documentation: https://api.slack.com/methods/chat.delete\n\nRequired scope: chat:write",
+      "guid": "b7bfd85d2804b064e81b669f6c22a614",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "url": "https://slack.com/api/chat.delete",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": {
+          "channel": "<<INPUT.channel_id>>",
+          "ts": "\"<<INPUT.message_timestamp>>\""
+        },
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "0e1e8eb2b60e7ab8cdd1c7bd5cf1efa88ba547422b545f0fd87e4c2ab6b4b3d3",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Send a message",
+      "disabled": false,
+      "description": "Posts a message to a public channel, private channel, or direct message/IM channel.\n\nLink to documentation: https://api.slack.com/methods/chat.postMessage\n\nRequired scope: chat:write",
+      "guid": "47a1b6acfbe141958ae4d9ab085f3ecb",
+      "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+      "options": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": "=LOCAL.final_payload",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        },
+        "local": {
+          "all_options": {
+            "channel": "<<INPUT.channel_user_id>>",
+            "text": "<<INPUT.message>>",
+            "icon_emoji": "<<INPUT.icon_emoji>>",
+            "icon_url": "<<INPUT.icon_url>>",
+            "link_names": "=INPUT.link_names",
+            "thread_ts": "\"<<INPUT.thread_timestamp>>\"",
+            "username": "<<INPUT.username>>",
+            "metadata": "=INPUT.metadata",
+            "mrkdwn": "=INPUT.markdown",
+            "reply_broadcast": "=INPUT.send_reply_to_channel",
+            "unfurl_links": "=INPUT.unfurl_links",
+            "unfurl_media": "=INPUT.unfurl_media",
+            "parse": "<<INPUT.parse>>"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_options,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "962a1d96f0c7fe98f124f5b0bee07caec8e8471972ffb8d44728c7802092be50",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    }
+  ],
+  "diagram_notes": [],
+  "links": [
+    {
+      "source": 0,
+      "receiver": 1
+    },
+    {
+      "source": 1,
+      "receiver": 2
+    },
+    {
+      "source": 3,
+      "receiver": 4
+    },
+    {
+      "source": 4,
+      "receiver": 5
+    },
+    {
+      "source": 4,
+      "receiver": 7
+    },
+    {
+      "source": 5,
+      "receiver": 8
+    },
+    {
+      "source": 6,
+      "receiver": 12
+    },
+    {
+      "source": 7,
+      "receiver": 6
+    },
+    {
+      "source": 8,
+      "receiver": 9
+    },
+    {
+      "source": 9,
+      "receiver": 10
+    },
+    {
+      "source": 9,
+      "receiver": 11
+    }
+  ],
+  "diagram_layout": "{\"23e66481a8ce428c491d7451b0552372\":[570,105],\"273be982789eb4321fb0feb04ec7200d\":[915,345],\"2a60e562c16219316c90fe9b0402198a\":[915,525],\"47a1b6acfbe141958ae4d9ab085f3ecb\":[1200,555],\"6665494ab6cc850128732af881bb5d6c\":[915,105],\"6856d48cec4ecb5681f4c617741f81db\":[915,225],\"836570d6b60f5a52eba29e87a3edb819\":[570,225],\"963fdcad11dd752229189571930e4074\":[1200,345],\"9f3ba4f694cf0fdf443d834246dd3263\":[1200,465],\"a86e7c676d830390a7a755f00c80d886\":[735,615],\"b7bfd85d2804b064e81b669f6c22a614\":[975,615],\"c73aa3fbf39b1acfa976dccd9ae33c52\":[915,420],\"cda19bff456211432d499f64153c4a35\":[570,345]}",
+  "story_library_metadata": {},
+  "monitor_failures": false,
+  "synchronous_webhooks_enabled": false,
+  "integrations": [
+    {
+      "action_inputs": [
+        {
+          "name": "Channel / User ID",
+          "description": "You can use a channel name (like ‘#general’) or an ID (like ‘C1234567890’). For non-public channels, specify the ID; this includes private channels, multi-person direct message channels (use the group ID), or DMs to a specific user (use the user ID).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\"C095HC04PB3\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message",
+          "description": "Use plain text, or [Slack formatting markup](https://slack.com/help/articles/202288908-Format-your-messages#Markup).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 1073741824,
+          "value": "\"<<json_parse_payload.output.user.username>> marked this detection as false positive.\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1879048192,
+          "value": "\"=CREDENTIAL.slack_1\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon emoji",
+          "description": "Emoji to use as the icon for this message (i.e. :chart_with_upwards_trend:). Overrides Icon URL input.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147418112,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon URL",
+          "description": "URL to an image to use as the icon for this message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147450880,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Link names?",
+          "description": "Find and link user groups. No longer supports linking individual users; use syntax shown in [Mentioning Users](https://api.slack.com/reference/surfaces/formatting#mentioning-users) instead.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147467264,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Markdown",
+          "description": "Select 'no' to disable Slack markup parsing. Enabled by default.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147479552,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Parse",
+          "description": "Change how messages are treated. See [further details](https://api.slack.com/methods/chat.postMessage#formatting).",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147481600,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Thread timestamp",
+          "description": "Provide another message's ts value to make this message a reply. Avoid using a reply's ts value; use its parent instead.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147483136,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl links?",
+          "description": "Select 'yes' to enable unfurling of primarily text-based content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147483392,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl media?",
+          "description": "Select 'no' to disable unfurling of media content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147483520,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Username",
+          "description": "Specify your bot's username that will send the message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147483584,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Metadata",
+          "description": "JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that workspace. ex: {\"event_type\": \"task_created\", \"event_payload\": { \"id\": \"11223\", \"title\": \"Redesign Homepage\"}}",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147483616,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Send reply to channel?",
+          "description": "Used in conjunction with input 'Thread timestamp' and indicates whether reply should be made visible to everyone in the channel or conversation. Defaults to false.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147483632,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "47a1b6acfbe141958ae4d9ab085f3ecb",
+      "product": "Slack",
+      "action_options_keys": []
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Channel ID",
+          "description": "The channel ID (e.g., ‘C1234567890’) containing the message to be deleted. This method will not recognize channel names.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\"C095HC04PB3\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message timestamp",
+          "description": "The timestamp of the message to be deleted.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 1073741824,
+          "value": "\"<<json_parse_payload.output.message.ts>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1879048192,
+          "value": "\"=CREDENTIAL.slack_1\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "9f3ba4f694cf0fdf443d834246dd3263",
+      "product": "Slack",
+      "action_options_keys": []
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Channel ID",
+          "description": "The channel ID (e.g., ‘C1234567890’) containing the message to be deleted. This method will not recognize channel names.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\"C095HC04PB3\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message timestamp",
+          "description": "The timestamp of the message to be deleted.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\"<<json_parse_payload.output.message.ts>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 0,
+          "value": "\"=CREDENTIAL.slack_1\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "b7bfd85d2804b064e81b669f6c22a614",
+      "product": "Slack",
+      "action_options_keys": []
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Channel / User ID",
+          "description": "You can use a channel name (like ‘#general’) or an ID (like ‘C1234567890’). For non-public channels, specify the ID; this includes private channels, multi-person direct message channels (use the group ID), or DMs to a specific user (use the user ID).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\"C095HC04PB3\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 939524096,
+          "value": "\"=CREDENTIAL.slack_1\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon emoji",
+          "description": "Emoji to use as the icon for this message (i.e. :chart_with_upwards_trend:). Overrides Icon URL input.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon URL",
+          "description": "URL to an image to use as the icon for this message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Link names?",
+          "description": "Find and link user groups. No longer supports linking individual users; use syntax shown in [Mentioning Users](https://api.slack.com/reference/surfaces/formatting#mentioning-users) instead.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Metadata",
+          "description": "JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that workspace. ex: {\"event_type\": \"task_created\", \"event_payload\": { \"id\": \"11223\", \"title\": \"Redesign Homepage\"}}",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Markdown",
+          "description": "Select 'no' to disable Slack markup parsing. Enabled by default.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Parse",
+          "description": "Change how messages are treated. See [further details](https://api.slack.com/methods/chat.postMessage#formatting).",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Send reply to channel?",
+          "description": "Used in conjunction with input 'Thread timestamp' and indicates whether reply should be made visible to everyone in the channel or conversation. Defaults to false.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Thread timestamp",
+          "description": "Provide another message's ts value to make this message a reply. Avoid using a reply's ts value; use its parent instead.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl links?",
+          "description": "Select 'yes' to enable unfurling of primarily text-based content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147418112,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl media?",
+          "description": "Select 'no' to disable unfurling of media content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2146959360,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Username",
+          "description": "Specify your bot's username that will send the message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message",
+          "description": "Use [Slack's Block Kit Builder](https://app.slack.com/block-kit-builder) to build your message. Then, click the 'Copy Payload' button on the top right of the block kit builder and paste it into the ‘Plain code’ tab here when you’re done. ",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147352576,
+          "value": "{\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Detection Alert: LaZagne Detected*\\n*Sensor ID:* <<detections_retrieval.body.routing.sid>>\\n*Computer Name:* <<detections_retrieval.body.detect.routing.hostname>> \\n*Type:* <<detections_retrieval.body.routing.event_type>>\\n*File path:* <<detections_retrieval.body.detect.event.FILE_PATH>>\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Virus Total Enrichment:*\\n*Times Submitted:* <<virus_total_enrichment.body.data.attributes.times_submitted>>\\n*Number of Malicious Flags:* <<virus_total_enrichment.body.data.attributes.last_analysis_stats.malicious>>\\n*Threat Label:* <<virus_total_enrichment.body.data.attributes.popular_threat_classification.suggested_threat_label>>\\n*Link to Virus total Report:* \\\"https://www.virustotal.com/gui/file/<<virus_total_enrichment.body.data.id>>\\\"\\n\"}},{\"type\":\"actions\",\"elements\":[{\"type\":\"button\",\"text\":{\"type\":\"plain_text\",\"text\":\"Quarantine?\"},\"style\":\"danger\",\"value\":\"{ 'action': 'quarantine', 'sid': <<detections_retrieval.body.routing.sid>> }\",\"action_id\":\"quarantine_yes\"},{\"type\":\"button\",\"text\":{\"type\":\"plain_text\",\"text\":\"🚫 Ignore\"},\"style\":\"primary\",\"value\":\"false_positive\",\"action_id\":\"quarantine_no\"}]}]}",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "cda19bff456211432d499f64153c4a35",
+      "product": "Slack",
+      "action_options_keys": []
+    }
+  ],
+  "parent_only_send_to_story": false,
+  "keep_events_for": 86400,
+  "reporting_status": true,
+  "send_to_story_enabled": false,
+  "entry_agent_guid": null,
+  "exit_agent_guids": [],
+  "api_entry_action_guids": [],
+  "api_exit_action_guids": [],
+  "send_to_story_access": null,
+  "send_to_story_access_source": 0,
+  "send_to_story_skill_use_requires_confirmation": true,
+  "pages": [],
+  "tags": [],
+  "time_saved_unit": "minutes",
+  "time_saved_value": 0,
+  "origin_story_identifier": "cloud:7b9c669a3126ed763fbcbee25c35b14c:0ec6d123ff2fdce49119cff597c35bdc",
+  "recipients": [
+    "jady2373@gmail.com"
+  ],
+  "integration_product": null,
+  "integration_vendor": null,
+  "llm_product_instructions": "",
+  "send_to_stories": [],
+  "exported_at": "2025-07-18T04:04:49Z",
+  "icon": ":magic_wand:"
+}
