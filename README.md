@@ -68,6 +68,8 @@ To safely test the workflow, set up a virtual machine (VM) as your test endpoint
 - Type: Microsoft Windows, Version: Windows 10/11 (64-bit).
 - Allocate RAM: 4GB+, CPU: 2+, Storage: 50GB+ dynamic VDI.
 - Attach the ISO: Settings > Storage > Add optical drive > Select ISO.
+![VirtualBox Main Window](images/VM-front-page.png)
+*VirtualBox main window with VM created.*
 
 ### Install Windows
 - Start the VM > Follow Windows setup (create user, skip product key for test).
@@ -77,6 +79,8 @@ To safely test the workflow, set up a virtual machine (VM) as your test endpoint
 - Extract the ZIP on the VM.
 - Run in Command Prompt (as admin): `Sysmon64.exe -accepteula -i sysmonconfig.xml` (use a config file like from SwiftOnSecurity's GitHub for good defaults: Download [sysmonconfig.xml](https://github.com/SwiftOnSecurity/sysmon-config) and place it in the same folder).
 - Verify: Open Event Viewer > Applications and Services Logs > Microsoft > Windows > Sysmon > Operational—look for sysmon with event_id 1.
+![Sysmon event confirmation](images/Sysmon-event-creation-confirmation.png)
+*New processes are detected via Sysmon.*
 
 ### LimaCharlie Account Creation and Installation Key
 
@@ -105,18 +109,15 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
 ### Install LimaCharlie Sensor
 - Download from LimaCharlie dashboard > Run installer on VM.
 
+![LimaCharlie Sensor Install](images/Limacharlie-Agent-Installation.png)
+*LimaCharlie sensor install prompt on VM.*
+
 ### Test Setup
 - Download LaZagne.exe to the VM (from [GitHub repo](https://github.com/AlessandroZ/LaZagne)—use safely!).
 - Run it (e.g., `LaZagne.exe all`) to trigger detection.
 
-![VirtualBox Main Window](images/VM front page.png)
-*VirtualBox main window with VM created.*
 
-![Sysmon event confirmation](images/Sysmon event creation confirmation.png)
-*New processes are detected via Sysmon.*
 
-![LimaCharlie Sensor Install](images/Limacharlie Agent Installation.png)
-*LimaCharlie sensor install prompt on VM.*
 
 ## Setup Guide
 
