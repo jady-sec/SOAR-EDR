@@ -87,7 +87,7 @@ To get started with LimaCharlie, you'll need to create a free account and genera
 - Fill in your details: Email, password, and organization name (e.g., "TestOrg").
 - Verify your email (check inbox for confirmation link).
 - Log in at [app.limacharlie.io](https://app.limacharlie.io) with your credentials.
-- Note: Free tier includes basic features; upgrade for advanced if needed.
+- Note: Free tier includes basic features enough for this entire project.
 
 #### Step 2: Generate an Installation Key
 - In the dashboard, go to the left menu > Sensors > Installation Keys (or search for "Installation Keys").
@@ -98,9 +98,9 @@ To get started with LimaCharlie, you'll need to create a free account and genera
 - Click "Create"—copy the key (long string like "install-key-abc123...").
 - Use this key to install the sensor on your VM (run the installer command with the key).
 
-[Screenshot Suggestion: LimaCharlie signup form; Dashboard view of Installation Keys page with new key created.]
+![Limacharlie installation keys](images/Limacharlie installation keys screen.png)
 
-This sets up your EDR backend—proceed to sensor installation on the VM. If issues, check LimaCharlie docs or support.
+This sets up your EDR backend—proceed to sensor installation on the VM.
 
 ### Install LimaCharlie Sensor
 - Download from LimaCharlie dashboard > Run installer on VM.
@@ -109,17 +109,14 @@ This sets up your EDR backend—proceed to sensor installation on the VM. If iss
 - Download LaZagne.exe to the VM (from [GitHub repo](https://github.com/AlessandroZ/LaZagne)—use safely!).
 - Run it (e.g., `LaZagne.exe all`) to trigger detection.
 
-![VirtualBox Main Window](images/virtualbox-main-window.png)
-*Screenshot of VirtualBox main window with VM created.*
+![VirtualBox Main Window](images/VM front page.png)
+*VirtualBox main window with VM created.*
 
-![Windows Installation Screen](images/windows-installation.png)
-*Screenshot of Windows installation screen.*
+![Sysmon event confirmation](images/Sysmon event creation confirmation.png)
+*New processes are detected via Sysmon.*
 
-![Sysmon Installation](images/sysmon-install.png)
-*Screenshot of Sysmon installation command prompt.*
-
-![LimaCharlie Sensor Install](images/limacharlie-sensor-install.png)
-*Screenshot of LimaCharlie sensor install prompt on VM.*
+![LimaCharlie Sensor Install](images/Limacharlie Agent Installation.png)
+*LimaCharlie sensor install prompt on VM.*
 
 ## Setup Guide
 
