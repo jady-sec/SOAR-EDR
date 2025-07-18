@@ -28,7 +28,7 @@ The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for 
 
 **Why this project?** It demonstrates EDR-SOAR integration for faster incident response, reducing manual work.
 
-![High-Level Flow Diagram](images/flow-diagram.png)
+![High-Level Flow Diagram](images/SOAR-WORKFLOW.drawio.png)
 *High-level workflow diagram showing components and steps.*
 
 ## Architecture
