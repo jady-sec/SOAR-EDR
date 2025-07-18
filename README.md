@@ -208,9 +208,11 @@ To integrate Slack with Tines, create a custom Slack app with a bot user. This e
    - In the app dashboard, go to "OAuth & Permissions" (left menu).
    - Under "Scopes" > "Bot Token Scopes", add:
      - `chat:write` (for posting/updating messages).
-     - `chat:delete` (for deleting alerts).
-     - `im:write` or `channels:manage` if needed for channels.
-     - `incoming-webhook` (for notifications).
+     - `channels:read` (for reading messages).
+     - `chat:write.public` (optional but can even send messages to public channels without the need of adding the bot)
+     - `groups:read` (to access groups).
+     - `commands` (for interactive actions).
+     - `user:read` (for handling user interacting with the message)
    - Scroll up to "OAuth Tokens for Your Workspace" > Click "Install to Workspace" > Authorize the app.
    - Copy the "Bot User OAuth Token" (starts with "xoxb-")—this is your bot token.
 
@@ -285,8 +287,8 @@ This bot handles alerts, buttons, and actions securely.
 - Configure: Generate the webhook URL in Tines and set it as the "Request URL" in your Slack app's interactivity settings (api.slack.com/apps > Your App > Interactivity & Shortcuts).
 - This captures the payload from Quarantine/Ignore buttons, including action_id, value (with sid), channel, and message_ts for branching and responses.
 
-![Webhook for Slack Responses Configuration](images/webhook-slack-responses-config.png)
-*Screenshot of the Webhook Trigger configuration for Slack responses in Tines.*
+![Request URL configuration](images/slack-tines-req-url.png)
+*Screenshot of the request URL set in Slack to send the user response to Tines.*
 
    - **Trigger (Branching)**: Rules for "quarantine_yes" and "quarantine_no" based on action_id/value.
    - On "yes":
