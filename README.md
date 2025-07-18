@@ -14,6 +14,7 @@ The workflow ensures only one detection per execution (via suppression), handles
 - [Testing and Troubleshooting](#testing-and-troubleshooting)
 - [Extensions and Improvements](#extensions-and-improvements)
 - [License](#license)
+- [Conclusion](#conclusion)
 
 ## Inspirations and Acknowledgments
 
@@ -441,6 +442,9 @@ To securely store API keys and tokens in Tines, create credential resources. The
 - Connect different stories for multi staged incident playbooks.
 - Add a logging system that will handle analyst interactions
 - Scale: Add more detection rules for various other common attack paths.
+
+## License
+MIT License. See [LICENSE](LICENSE) file.
 
 ## Conclusion
 
