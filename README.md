@@ -307,6 +307,9 @@ This bot handles alerts, buttons, and actions securely.
 ![JSON Parse function of Payload Configuration](images/parse-json-function.png)
 *Screenshot of the Event Transformation (JSON Parse of Payload) configuration in Tines.*
 
+![JSON Parse function output](images/json-parsed-output.png)
+*Screenshot of the Event Transformation (JSON Parse of Payload) output in Tines.*
+
 #### Trigger (Branching on Button Click)
 - Add a 2 Trigger agents connected from the JSON Parse (Slack payload).
 - This branches the flow based on the button clicked by the analyst.
@@ -429,9 +432,9 @@ To securely store API keys and tokens in Tines, create credential resources. The
 
 *Screenshot of the Limacharlie api key page.*
 
-###[Link-to-tines-workbook](soar-edr.json)
+### [Link-to-tines-workbook](soar-edr.json)
 
-###[Link-to-demo-video](soar-edr-demo.mp4)
+### [Link-to-demo-video](soar-edr-demo.mp4)
 
 ## Testing and Troubleshooting
 1. Run LaZagne on test endpoint but be aware of the alert suppresion (1 detection per 1 minute).
