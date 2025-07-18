@@ -5,88 +5,20 @@ This project implements an automated Security Orchestration, Automation, and Res
 The workflow ensures only one detection per execution (via suppression), handles duplicates, quarantines machines on approval, deletes alerts on ignore, and sends confirmations.
 
 ## Table of Contents
-
-<details>
-<summary>Overview</summary>
 - [Overview](#overview)
-</details>
-
-<details>
-<summary>Architecture</summary>
 - [Architecture](#architecture)
-</details>
-
-<details>
-<summary>Prerequisites</summary>
 - [Prerequisites](#prerequisites)
-</details>
-
-<details>
-<summary>Test Environment Setup (VM Installation)</summary>
 - [Test Environment Setup (VM Installation)](#test-environment-setup-vm-installation)
-  - [Download and Install VirtualBox](#download-and-install-virtualbox)
-  - [Download Windows ISO](#download-windows-iso)
-  - [Create the VM](#create-the-vm)
-  - [Install Windows](#install-windows)
-  - [Install Sysmon (For Enhanced Logging)](#install-sysmon-for-enhanced-logging)
-  - [LimaCharlie Account Creation and Installation Key](#limacharlie-account-creation-and-installation-key)
-    - [Step 1: Create a LimaCharlie Account](#step-1-create-a-limacharlie-account)
-    - [Step 2: Generate an Installation Key](#step-2-generate-an-installation-key)
-  - [Install LimaCharlie Sensor](#install-limacharlie-sensor)
-  - [Test Setup](#test-setup)
-</details>
-
-<details>
-<summary>LimaCharlie Configuration</summary>
-- [LimaCharlie Configuration](#limacharlie-configuration)
-</details>
-
-<details>
-<summary>Tines Workflow</summary>
-- [Tines Workflow](#tines-workflow)
-  - [Detections Retrieval Webhook (from LimaCharlie)](#detections-retrieval-webhook-from-limacharlie)
-  - [HTTP Request (VirusTotal Enrichment)](#http-request-virustotal-enrichment)
-  - [Result](#result)
-  - [Slack App Integration (Custom Tines Bot Creation)](#slack-app-integration-custom-tines-bot-creation)
-  - [Send Message to Slack Template (Interactive Alert to Analyst)](#send-message-to-slack-template-interactive-alert-to-analyst)
-  - [Webhook Trigger (for Slack User Responses)](#webhook-trigger-for-slack-user-responses)
-  - [Event Transformation (JSON Parse of Payload)](#event-transformation-json-parse-of-payload)
-  - [Trigger (Branching on Button Click)](#trigger-branching-on-button-click)
-  - [Event Transformation (Get Sensor ID) - If User Clicks Quarantine](#event-transformation-get-sensor-id---if-user-clicks-quarantine)
-  - [Isolate Sensor (via Default LimaCharlie Template) - Quarantine Path](#isolate-sensor-via-default-limacharlie-template---quarantine-path)
-  - [HTTP Request (Delete Original Message) - After Quarantine](#http-request-delete-original-message---after-quarantine)
-  - [Send Email to Analyst (Quarantine Confirmation)](#send-email-to-analyst-quarantine-confirmation)
-  - [HTTP Request (Delete Message) - Ignore Path (quarantine_no)](#http-request-delete-message---ignore-path-quarantine_no)
-  - [Send Message to Slack Template (False Positive Message) - Ignore Path](#send-message-to-slack-template-false-positive-message---ignore-path)
-</details>
-
-<details>
-<summary>Credentials Configuration</summary>
-- [Credentials Configuration](#credentials-configuration)
-  - [Slack Credentials](#slack-credentials)
-  - [VirusTotal Credentials](#virustotal-credentials)
-  - [LimaCharlie Credentials](#limacharlie-credentials)
-</details>
-
-<details>
-<summary>Testing and Troubleshooting</summary>
+- [Setup Guide](#setup-guide)
 - [Testing and Troubleshooting](#testing-and-troubleshooting)
-</details>
-
-<details>
-<summary>Extensions and Improvements</summary>
 - [Extensions and Improvements](#extensions-and-improvements)
-</details>
-
-<details>
-<summary>Conclusion</summary>
-- [Conclusion](#conclusion)
-</details>
-
-<details>
-<summary>License</summary>
 - [License](#license)
-</details>
+
+## Inspirations and Acknowledgments
+
+This project was inspired by the [MYDFIR SOAR project](https://youtu.be/Gs1pYJfWv7k?si=HPL_kqe5mb8GUF_P) , which provided a foundational idea for integrating EDR with SOAR tools. While we drew inspiration from its structure, we took different paths, including custom deduplication in LimaCharlie, interactive Slack buttons with button value encoding for sid, VirusTotal enrichment, and Tines-specific templates for isolation and messaging. Significant developments were made to handle duplicates, add confirmations/deletes, and ensure end-to-end automation.
+
+Thanks to the MYDFIR team for the initial spark! If you're interested in similar workflows, check out their repo.
 
 ## Overview
 The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for analyst review, and automates quarantine (network isolation) or ignore actions. Key features:
