@@ -368,31 +368,62 @@ This bot handles alerts, buttons, and actions securely.
 
 ![Email to Analyst Configuration](images/email-confirmation.png)
 *Screenshot of the Email sent to the analyst.*
-4. Credentials: Create for LimaCharlie (uid/secret), Slack (bot token), VirusTotal (key).
 
-Export your Tines story as JSON and include it in this repo for replication.
+#### HTTP Request (Delete Message) - Ignore Path (quarantine_no)
+- On the "quarantine_no" path, use the default (delete-message) template of slack connected from the quarantine_no Trigger (branching).
+- This deletes the original Slack alert message when the analyst chooses to ignore.
+- Method: POST.
+- Body (JSON): `{ "channel": "{{ .json_parse_payload.output.channel.id }}", "ts": "{{ .json_parse_payload.output.message.ts }}" }`.
+- This cleans up the alert on ignore.
 
-![Tines Trigger Rules Close-Up](images/tines-trigger-rules.png)
-*Close-up screenshot of Trigger rules in Tines.*
+![Delete Message Ignore Path event](images/delete-ignore-event.png)
+*Screenshot of the Delete Message output event in Tines.*
 
-![Tines Extraction Regex](images/tines-extraction-regex.png)
-*Screenshot of the Event Transformation agent for sid extraction.*
+#### Send Message to Slack Template (False Positive Message) - Ignore Path
+- On the "quarantine_no" path, add the Send Message to Slack template connected from the delete message agent.
+- This sends a confirmation message indicating the user marked the detection as false positive.
+- Credential: Your Slack bot token.
+- Channel: `{{ .json_parse_payload.output.channel.id }}`.
+- Message Text: <<json_parse_payload.output.user.username>> marked this detection as false positive.
+- This notifies the channel of the ignore action.
 
-### Slack App Integration
-1. Create app at api.slack.com/apps > Add features: Bot, permissions (chat:write, chat:delete).
-2. Install to workspace, get bot token.
-3. Add interactivity: Set Request URL to your Tines webhook for button clicks.
+![False Positive Message Confirmation](images/send-message-ignore.png)
+*Screenshot of the False Positive Message.*
 
-![Slack App Permissions](images/slack-permissions.png)
-*Screenshot of Slack app permissions page.*
+### Credentials Configuration
+To securely store API keys and tokens in Tines, create credential resources. These are referenced in agents (e.g., `{{ .slack_bot_token }}`) to avoid hardcoding secrets. Follow these steps for each service.
 
-![Slack Interactivity Setup](images/slack-interactivity.png)
-*Screenshot of Slack interactivity setup with Tines webhook URL.*
+#### Slack Credentials
+1. In Tines, go to Resources > Credentials > Click "Create Credential".
+2. Name: "slack_bot_token".
+3. Type: "Text".
+4. Add Field: Key "token", Value: Paste your Slack bot OAuth token (from app installation, starts with "xoxb-").
+5. Save. Reference as `{{ .slack_bot_token.token }}` in Slack-related agents.
 
-### VirusTotal Integration
-1. Get free API key at virustotal.com.
-2. In Tines, add credential "virustotal_api" with key.
-3. HTTP Request: GET `https://www.virustotal.com/api/v3/files/{hash}` with header "x-apikey: {{ .virustotal_api.key }}".
+![slack-api-success](images/slack-api-credential.png)
+*Screenshot of the slack api key page.*
+
+#### VirusTotal Credentials
+1. In Tines, go to Resources > Credentials > Click "Create Credential".
+2. Name: "virustotal_api".
+3. Type: "Text".
+4. Add Field: Key "key", Value: Paste your VirusTotal API key (from virustotal.com account).
+5. Save. Reference as `{{ .virustotal_api.key }}` in the VirusTotal HTTP Request header.
+
+![virustotal-api-success](images/virustotal-api-credentials.png)
+*Screenshot of the virustotal api key page.*
+
+#### LimaCharlie Credentials
+1. In Tines, go to Resources > Credentials > Click "Create Credential".
+2. Name: "limacharlie_api".
+3. Type: "Text".
+4. Add Fields:
+   - Key "uid", Value: Paste your User ID (from LimaCharlie profile).
+   - Key "secret", Value: Paste your API key (from API Keys section).
+5. Save. Reference as `{{ .limacharlie_api.uid }}` and `{{ .limacharlie_api.secret }}` in LimaCharlie-related agents (e.g., Isolate Sensor template).
+
+![Limacharlie-api-success](images/limacharlie-api-credentials.png)
+*Screenshot of the Limacharlie api key page.*
 
 ## Testing and Troubleshooting
 1. Run LaZagne on test endpoint—expect one detection.
