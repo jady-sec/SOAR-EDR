@@ -28,7 +28,7 @@ The system detects LaZagne runs on Windows endpoints, sends alerts to Slack for 
 
 **Why this project?** It demonstrates EDR-SOAR integration for faster incident response, reducing manual work.
 
-![High-Level Flow Diagram](images/SOAR-WORKFLOW.drawio.png)
+![High-Level Flow Diagram](images/soar-workflow-final.png)
 *High-level workflow diagram showing components and steps.*
 
 ## Architecture
@@ -194,6 +194,7 @@ This sets up your EDR backend—proceed to sensor installation on the VM.
 #### Result
 
 ![VirusTotal Enrichment Results](images/Virustotal-enrichment-results.png)
+
 *Screenshot of the event generated from the virustotal node.*
 
 ### Slack App Integration (Custom Tines Bot Creation)
@@ -290,8 +291,33 @@ This bot handles alerts, buttons, and actions securely.
 ![Request URL configuration](images/slack-tines-req-url.png)
 *Screenshot of the request URL set in Slack to send the user response to Tines.*
 
-   - **Trigger (Branching)**: Rules for "quarantine_yes" and "quarantine_no" based on action_id/value.
-   - On "yes":
+![Payload output](images/user-response-event-webhook.png)
+*Screenshot of the event emitted when the user responds to the message.*
+
+#### Event Transformation (JSON Parse of Payload)
+- Add an Event Transformation agent connected from the Webhook Trigger (for LimaCharlie detections) or Slack responses webhook.
+- This is done as the payload from the event is just a string which makes it difficult to navigate.
+- Mode: JSON Parse.
+- Input Path: `<<user_response_on_slack.body.payload>>` (this parses the incoming string payload into a structured JSON object for easy access to fields like event details, actions, or sid).
+- This step makes the raw data usable for enrichment, branching, and extraction (e.g., pulling HASH for VirusTotal or action_id for buttons).
+
+![JSON Parse function of Payload Configuration](images/parse-json-function.png)
+*Screenshot of the Event Transformation (JSON Parse of Payload) configuration in Tines.*
+
+#### Trigger (Branching on Button Click)
+- Add a 2 Trigger agents connected from the JSON Parse (Slack payload).
+- This branches the flow based on the button clicked by the analyst.
+- Rules:
+  - Rule 1: Path `{{ .json_parse_payload.output.actions[0].action_id }}` equals "quarantine_yes" → Connect to quarantine path (sid extraction, isolation, delete, confirmation).
+  - Rule 2: Equals "quarantine_no" → Connect to ignore path (delete, false positive message).
+
+![If user clicks quarantine](images/quarantine-click-event.png)
+*Event generated when user clicks quarantine.*
+
+![If user clicks ignore](images/Ignore-click-event.png)
+*Event generated when user clicks Ignore.*
+
+
      - Event Transformation (Regex Extract sid).
      - Isolate Sensor Template (or custom HTTP: JWT then isolation).
      - HTTP Request (Delete original message).
