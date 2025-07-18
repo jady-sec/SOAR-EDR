@@ -55,7 +55,7 @@ The workflow:
 - **VirusTotal API Key**: Free account for enrichment.
 - Test endpoint (Windows VM) with LaZagne.exe for testing.
 
-## Test Environment Setup (VM Installation)
+## Setup guide
 To safely test the workflow, set up a virtual machine (VM) as your test endpoint. This isolates LaZagne executions and prevents risks to real systems. We recommend using [VirtualBox](https://www.virtualbox.org/) (free) for Windows guests.
 
 ### Download and Install VirtualBox
