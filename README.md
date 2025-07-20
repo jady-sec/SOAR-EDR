@@ -4,6 +4,10 @@ This project implements an automated Security Orchestration, Automation, and Res
 
 The workflow ensures only one detection per execution (via suppression), handles duplicates, quarantines machines on approval, deletes alerts on ignore, and sends confirmations.
 
+## Demo
+https://youtu.be/9k6tHsjOoUU
+*Demo video showcasing the workflow.*
+
 ## Table of Contents
 - [Inspirations and Acknowledgements](#inspirations-and-acknowledgements)
 - [Overview](#overview)
