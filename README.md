@@ -4,10 +4,6 @@ This project implements an automated Security Orchestration, Automation, and Res
 
 The workflow ensures only one detection per execution (via suppression), handles duplicates, quarantines machines on approval, deletes alerts on ignore, and sends confirmations.
 
-## Demo
-https://youtu.be/9k6tHsjOoUU
-*Demo video showcasing the workflow.*
-
 ## Table of Contents
 - [Inspirations and Acknowledgements](#inspirations-and-acknowledgements)
 - [Overview](#overview)
@@ -440,8 +436,6 @@ To securely store API keys and tokens in Tines, create credential resources. The
 *Screenshot of the Limacharlie api key page.*
 
 ### [Link-to-tines-workbook](soar-edr.json)
-
-### [Link-to-demo-video](soar-edr-demo.mp4)
 
 ## Testing and Troubleshooting
 1. Run LaZagne on test endpoint but be aware of the alert suppresion (1 detection per 1 minute).
